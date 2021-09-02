@@ -1,4 +1,3 @@
-// #pragma once
 #ifndef MACRO_H
 #define MACRO_H
 
@@ -7,27 +6,30 @@
 #include <limits>
 #include <memory>
 
-using namespace std;
+
+// Usings
+
+using std::shared_ptr;
+using std::make_shared;
+using std::sqrt;
 
 // Constants
 
-const double infinity = numeric_limits<double>::infinity();
-const double PI = 3.1415926;
-const double gamma_coff = 2.2;
-// Utility functions
+const double infinity = std::numeric_limits<double>::infinity();
+const double PI = 3.1415926535897932385;
+const double gamma_off = 2.2;
+
+// Utility Functions
 
 inline double degrees_to_radians(double degrees) {
-    return degrees * PI / 180;
+    return degrees * PI / 180.0;
 }
 
 inline double clamp(double x, double min, double max) {
-    if(x < min) return min;
-    if(x > max) return max;
+    if (x < min) return min;
+    if (x > max) return max;
     return x;
 }
-
-inline double ffmin(double a, double b) { return a <= b ? a : b; }
-inline double ffmax(double a, double b) { return a >= b ? a : b; }
 
 inline double random_double() {
     // Returns a random real in [0,1).
@@ -39,6 +41,15 @@ inline double random_double(double min, double max) {
     return min + (max-min)*random_double();
 }
 
+inline int random_int(int min, int max) {
+    // Returns a random integer in [min,max].
+    return static_cast<int>(random_double(min, max+1));
+}
 
 // Common Headers
+
+// #include "ray.h"
+// #include "vec3.h"
+
+
 #endif

@@ -2,46 +2,61 @@
 #define CAMERA_H
 
 #include "macro.h"
-#include "vec3.h"
 #include "ray.h"
+#include "vec3.h"
 
 class camera {
-
     public:
-        camera(
-            vec3 lookfrom,
-            vec3 lookat,
-            vec3 vup,
-            double fov,
-            double aspect
-        ){
-            origin = lookfrom;
-            vec3 u,v,w;
-            // fov && aspect
-            auto theta = degrees_to_radians(fov);
-            auto half_height = tan(theta / 2);
-            auto half_width = aspect * half_height;
+        camera() {}
 
-            // u, v, w
+        camera(
+            point3 lookfrom,
+            point3 lookat,
+            vec3   vup,
+            double vfov, // vertical field-of-view in degrees
+            double aspect_ratio,
+            double aperture,
+            double focus_dist,
+            double _time0 = 0,
+            double _time1 = 0
+        ) {
+            auto theta = degrees_to_radians(vfov);
+            auto h = tan(theta/2);
+            auto viewport_height = 2.0 * h;
+            auto viewport_width = aspect_ratio * viewport_height;
+
             w = unit_vector(lookfrom - lookat);
             u = unit_vector(cross(vup, w));
             v = cross(w, u);
 
-            // horizontal && vertical
-            lower_left_corner = origin - half_height * v - half_width * u - w;
-            horizontal = 2 * half_width * u;
-            vertical = 2 * half_height * v;
+            origin = lookfrom;
+            horizontal = focus_dist * viewport_width * u;
+            vertical = focus_dist * viewport_height * v;
+            lower_left_corner = origin - horizontal/2 - vertical/2 - focus_dist*w;
 
+            lens_radius = aperture / 2;
+            time0 = _time0;
+            time1 = _time1;
         }
-    ray get_ray(double s, double t) {
-        return ray(origin, lower_left_corner + s * horizontal + t * vertical - origin);
-    }
 
-    public:
-        vec3 origin;
-        vec3 lower_left_corner;
+        ray get_ray(double s, double t) const {
+            vec3 rd = lens_radius * random_in_unit_disk();
+            vec3 offset = u * rd.x() + v * rd.y();
+            return ray(
+                origin + offset,
+                lower_left_corner + s*horizontal + t*vertical - origin - offset,
+                random_double(time0, time1)
+            );
+        }
+
+    private:
+        point3 origin;
+        point3 lower_left_corner;
         vec3 horizontal;
         vec3 vertical;
+        vec3 u, v, w;
+        double lens_radius;
+        double time0, time1;  // shutter open/close times
 };
 
 #endif
