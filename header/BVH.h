@@ -30,6 +30,27 @@ class bvh_node : public hittable{
         shared_ptr<hittable> right;
         aabb box;
 };
+// Comparator function
+inline bool box_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis) {
+    aabb box_a;
+    aabb box_b;
+    if (!a->bounding_box(0,0, box_a) || !b->bounding_box(0,0, box_b))
+        std::cerr << "No bounding box in bvh_node constructor.\n";
+
+    return box_a.get_min().e[axis] < box_b.get_min().e[axis];
+}
+
+bool box_x_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
+    return box_compare(a, b, 0);
+}
+
+bool box_y_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
+    return box_compare(a, b, 1);
+}
+
+bool box_z_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
+    return box_compare(a, b, 2);
+}
 
 // construct the BVH tree
 
@@ -88,29 +109,6 @@ bool bvh_node::hit(const ray& r, double t_min, double t_max, hit_record& rec) co
 
     return hit_left || hit_right;
 }
-
-// Comparator function
-inline bool box_compare(const shared_ptr<hittable> a, const shared_ptr<hittable> b, int axis) {
-    aabb box_a;
-    aabb box_b;
-    if (!a->bounding_box(0,0, box_a) || !b->bounding_box(0,0, box_b))
-        std::cerr << "No bounding box in bvh_node constructor.\n";
-
-    return box_a.get_min().e[axis] < box_b.get_min().e[axis];
-}
-
-bool box_x_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
-    return box_compare(a, b, 0);
-}
-
-bool box_y_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
-    return box_compare(a, b, 1);
-}
-
-bool box_z_comparator(const shared_ptr<hittable> a, const shared_ptr<hittable> b ) {
-    return box_compare(a, b, 2);
-}
-
 
 #endif
 
