@@ -1,0 +1,23 @@
+#ifndef STB_LOADER_H
+#define STB_LOADER_H
+
+
+// Disable pedantic warnings for this external library.
+#ifdef _MSC_VER
+    // Microsoft Visual C++ Compiler
+    #pragma warning (push, 0)
+#endif
+
+
+
+#define STB_IMAGE_IMPLEMENTATION
+#include "/Users/cowlick/RTinOneWeek/external/stb_image.h"
+
+
+// Restore warning levels.
+#ifdef _MSC_VER
+    // Microsoft Visual C++ Compiler
+    #pragma warning (pop)
+#endif
+
+#endif
