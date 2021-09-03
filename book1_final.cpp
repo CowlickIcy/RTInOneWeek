@@ -1,3 +1,4 @@
+
 #include "header/macro.h"
 
 #include "header/camera.h"
@@ -7,40 +8,36 @@
 #include "header/hittable_list.h"
 #include "header/material.h"
 #include "header/sphere.h"
-#include "header/rectangular.h"
 
 #include <iostream>
 
-using namespace std;
 
-color ray_color(const ray& r, const color& background, const hittable& world, int depth) {
+color ray_color(const ray& r, const hittable& world, int depth) {
     hit_record rec;
 
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if (depth <= 0)
         return color(0,0,0);
 
-    // If the ray hit nothing, return black background
-    if(!world.hit(r, 0.001, infinity, rec)){
-        return background;
-    }
-    ray scattered;
-    color attenuation;
-    color emitted = rec.mat_ptr->emitted(rec.u, rec.v, rec.p);
-
-    if(!rec.mat_ptr->scatter(r, rec, attenuation, scattered)){
-        return emitted;
+    if (world.hit(r, 0.001, infinity, rec)) {
+        ray scattered;
+        color attenuation;
+        if (rec.mat_ptr->scatter(r, rec, attenuation, scattered))
+            return attenuation * ray_color(scattered, world, depth-1);
+        return color(0,0,0);
     }
 
-    return emitted + attenuation * ray_color(scattered, background, world, depth-1);
+    vec3 unit_direction = unit_vector(r.direction());
+    auto t = 0.5*(unit_direction.y() + 1.0);
+    return (1.0-t)*color(1.0, 1.0, 1.0) + t*color(0.5, 0.7, 1.0);
 }
 
 
 hittable_list random_scene() {
     hittable_list world;
 
-    auto checker = make_shared<checker_texture>(color(0.2, 0.3, 0.1), color(0.9, 0.9, 0.9));
-    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(checker)));
+    auto ground_material = make_shared<lambertian>(color(0.5, 0.5, 0.5));
+    world.add(make_shared<sphere>(point3(0,-1000,0), 1000, ground_material));
 
     for (int a = -11; a < 11; a++) {
         for (int b = -11; b < 11; b++) {
@@ -83,42 +80,28 @@ hittable_list random_scene() {
     return world;
 }
 
-hittable_list simple_light() {
-    hittable_list objects;
-
-    auto pertext = make_shared<noise_texture>(4);
-    objects.add(make_shared<sphere>(point3(0,-1000,0), 1000, make_shared<lambertian>(pertext)));
-    objects.add(make_shared<sphere>(point3(0,2,0), 2, make_shared<lambertian>(pertext)));
-
-    auto difflight = make_shared<diffuse_light>(color(4,4,4));
-    objects.add(make_shared<xy_rect>(3, 5, 1, 3, -2, difflight));
-
-    // objects.add(make_shared<sphere>(point3(0,5,0), 1.5, difflight));
-    return objects;
-}
 
 int main() {
 
     // Image
 
     const auto aspect_ratio = 16.0 / 9.0;
-    const int image_width = 400;
+    const int image_width = 1200;
     const int image_height = static_cast<int>(image_width / aspect_ratio);
     const int samples_per_pixel = 100;
-    const int max_depth = 50;
+    const int max_depth = 30;
 
     // World
 
-    auto world = simple_light();
-    const color background(0.0, 0.0, 0.0);
+    auto world = random_scene();
 
     // Camera
 
-    point3 lookfrom(26,3,6);
-    point3 lookat(0,2,0);
+    point3 lookfrom(13,2,3);
+    point3 lookat(0,0,0);
     vec3 vup(0,1,0);
     auto dist_to_focus = 10.0;
-    auto aperture = 0.0;
+    auto aperture = 0.1;
 
     camera cam(lookfrom, lookat, vup, 20, aspect_ratio, aperture, dist_to_focus, 0.0, 0.0);
 
@@ -134,7 +117,7 @@ int main() {
                 auto u = (i + random_double()) / (image_width-1);
                 auto v = (j + random_double()) / (image_height-1);
                 ray r = cam.get_ray(u, v);
-                pixel_color += ray_color(r,background, world, max_depth);
+                pixel_color += ray_color(r, world, max_depth);
             }
             write_color(std::cout, pixel_color, samples_per_pixel);
         }
