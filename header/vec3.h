@@ -123,7 +123,8 @@ inline vec3 random_in_unit_disk() {
         return p;
     }
 }
-
+//  Although faithfully restoring the book's three ways of generating
+//  the diffuse's random direction, the efficiency cost is clear.
 inline vec3 random_in_unit_sphere() {
     while (true) {
         auto p = vec3::random(-1,1);
