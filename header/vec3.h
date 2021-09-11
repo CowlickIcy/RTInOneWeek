@@ -5,8 +5,7 @@
 #include <iostream>
 #include "macro.h"
 
-using std::sqrt;
-using std::fabs;
+using namespace std;
 
 class vec3 {
     public:
