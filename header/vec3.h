@@ -99,7 +99,7 @@ inline vec3 operator*(const vec3 &v, double t) {
 inline vec3 operator/(vec3 v, double t) {
     return (1/t) * v;
 }
-
+// Dot product, remember its a number
 inline double dot(const vec3 &u, const vec3 &v) {
     return u.e[0] * v.e[0]
          + u.e[1] * v.e[1]
@@ -138,7 +138,7 @@ inline vec3 random_unit_vector() {
 
 inline vec3 random_in_hemisphere(const vec3& normal) {
     vec3 in_unit_sphere = random_in_unit_sphere();
-    if (dot(in_unit_sphere, normal) > 0.0) // In the same hemisphere as the normal
+    if (dot(in_unit_sphere, normal) > 0.0) 
         return in_unit_sphere;
     else
         return -in_unit_sphere;

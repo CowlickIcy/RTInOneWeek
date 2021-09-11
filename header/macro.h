@@ -9,9 +9,7 @@
 
 // Usings
 
-using std::shared_ptr;
-using std::make_shared;
-using std::sqrt;
+using namespace std;
 
 // Constants
 
@@ -24,6 +22,16 @@ const double gamma_off = 2.2;
 inline double degrees_to_radians(double degrees) {
     return degrees * PI / 180.0;
 }
+
+
+inline double ffmin(double a, double b) {
+    return a <= b ? a : b;
+}
+
+inline double ffmax(double a, double b) {
+    return a >= b ? a : b;
+}
+
 
 inline double clamp(double x, double min, double max) {
     if (x < min) return min;

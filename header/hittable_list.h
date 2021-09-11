@@ -11,7 +11,7 @@
 #include <memory>
 #include <vector>
 
-
+using namespace std;
 class hittable_list : public hittable  {
     public:
         hittable_list() {}
@@ -26,7 +26,7 @@ class hittable_list : public hittable  {
             
 
     public:
-        std::vector<shared_ptr<hittable>> objects;
+        vector<shared_ptr<hittable>> objects;
 };
 
 // Ray intersection

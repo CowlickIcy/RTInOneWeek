@@ -16,12 +16,12 @@ struct hit_record {
     point3 p;
     vec3 normal;
     shared_ptr<material> mat_ptr;
-    
-    double t;                       // Hit timing
-
-    double u;                       // Texture coordinate
+    // Hit timing
+    double t;                       
+    // Texture coordinate
+    double u;                       
     double v;
-
+    // Normal direction
     bool front_face;
 
     inline void set_face_normal(const ray& r, const vec3& outward_normal) {
