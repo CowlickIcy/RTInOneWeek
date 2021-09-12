@@ -4,7 +4,6 @@
 #include "macro.h"
 #include "ray.h"
 #include "vec3.h"
-#include <cmath>
 
 using namespace std;
 
