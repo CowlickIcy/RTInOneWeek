@@ -19,6 +19,7 @@ color ray_color(const ray& r, const color& background, const hittable& world, in
     // If we've exceeded the ray bounce limit, no more light is gathered.
     if (depth <= 0)
         return color(0,0,0);
+    
 
     // If the ray hit nothing, return black background
     if(!world.hit(r, 0.001, infinity, rec)){

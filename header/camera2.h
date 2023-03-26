@@ -3,6 +3,8 @@
 #define CAMERA_H
 
 #include "macro.h"
+#include "vec3.h"
+#include "ray.h"
 
 class camera {
     public:
